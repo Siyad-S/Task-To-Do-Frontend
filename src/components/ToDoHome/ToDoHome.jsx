@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from "react";
 import "./ToDoHome.css";
 import { useDispatch, useSelector } from "react-redux";
-import { getTasks, postTask } from "../../redux/slices/toDoHomeSlice";
+import {
+  getTasks,
+  postTask,
+  updateTasks,
+} from "../../redux/slices/toDoHomeSlice";
 import { useFormik } from "formik";
 
 const ToDoHome = () => {
   const dispatch = useDispatch();
-  const allTasks = useSelector((state) => state.toDo.allTask.taskData
-  );
-  const [showTasks, setShowTasks] = useState(false)
+  const allTasks = useSelector((state) => state.toDo.allTask.taskData);
+  const [showTasks, setShowTasks] = useState(true);
 
   useEffect(() => {
     dispatch(getTasks());
@@ -24,11 +27,17 @@ const ToDoHome = () => {
       dueDate: "",
     },
     onSubmit: (values) => {
-        dispatch(postTask(values));
-        setShowTasks(true)
-    }    
-
+      dispatch(postTask(values));
+    },
   });
+
+  const handleCheckboxChange = (taskId, completed) => {
+    if (completed === false) {
+        dispatch(updateTasks({ id: taskId, completed: true }));
+    } else {
+        dispatch(updateTasks({ id: taskId, completed: false }));
+    }
+  };
 
   return (
     <div className="main-body">
@@ -72,13 +81,24 @@ const ToDoHome = () => {
           </form>
         </div>
         <div className="task-list">
-            {showTasks ? (
-                allTasks?.map((task, index) => (
-                    <div key={index}>
-                    <h2>{task.title}</h2>
-                    </div>
-                ))
-            ): null}
+          {showTasks &&
+            allTasks?.map((task, index) => (
+              <div key={index}>
+                <h2>Title: {task.title}</h2>
+                <p>Type: {task.type}</p>
+                <p>Description: {task.description}</p>
+                <p>Due Date: {task.dueDate}</p>
+                <label htmlFor={`taskStatus-${index}`}>
+                  <p>Incomplete</p>
+                  <input
+                    type="checkbox"
+                    id={`taskStatus-${index}`}
+                    checked={task.completed === true}
+                    onChange={() => handleCheckboxChange(task._id, task.completed)}
+                  />
+                </label>
+              </div>
+            ))}
         </div>
         <div className="footer">
           {/* Total tasks: <span>{tasks.length}</span>, Completed:{" "}

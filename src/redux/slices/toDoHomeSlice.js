@@ -21,6 +21,16 @@ export const getTasks = createAsyncThunk("getTasks", async () => {
   }
 });
 
+export const getTask = createAsyncThunk("getTask", async ({id}) => {
+  try {
+    const response = await axios.get(`http://localhost:4000/tasks/${id}`);
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.log("taskData get has failed", error.response.data.message);
+  }
+});
+
 export const updateTasks = createAsyncThunk("updateTasks", async ({id, taskData}) => {
   try {
     const response = await axios.put(`http://localhost:4000/tasks/${id}`, taskData);
@@ -31,7 +41,7 @@ export const updateTasks = createAsyncThunk("updateTasks", async ({id, taskData}
   }
 });
 
-export const deleteTasks = createAsyncThunk("getTasks", async (id) => {
+export const deleteTasks = createAsyncThunk("getTasks", async ({id}) => {
   try {
     const response = await axios.delete(`http://localhost:4000/tasks/${id}`);
     console.log(response.data);
@@ -45,7 +55,8 @@ export const toDoSlice = createSlice({
   name: "toDo",
   initialState: {
     allTask: [],
-    isError: false
+    isError: false,
+    singleTask: {}
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -53,9 +64,16 @@ export const toDoSlice = createSlice({
        .addCase(getTasks.fulfilled, (state, action) => {
         state.allTask = {...action.payload}
        })
+       .addCase(getTask.fulfilled, (state, action) => {
+        state.singleTask = {...action.payload}
+       })
        .addCase(getTasks.rejected, (state, action) => {
         state.isError = true;
         console.log("Error on get method");
+       })
+       .addCase(getTask.rejected, (state, action) => {
+        state.isError = true;
+        console.log("Error on single get method");
        })
   },
 });

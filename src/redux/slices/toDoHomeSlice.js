@@ -41,6 +41,16 @@ export const updateTasks = createAsyncThunk("updateTasks", async ({id, taskData}
   }
 });
 
+export const updateTaskStatus = createAsyncThunk("updateTaskStatus", async ({id, completed}) => {
+  try {
+    const response = await axios.put(`http://localhost:4000/tasks/status/${id}`, {completed});
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.log("taskData update has failed", error.response.data.message);
+  }
+});
+
 export const deleteTasks = createAsyncThunk("getTasks", async ({id}) => {
   try {
     const response = await axios.delete(`http://localhost:4000/tasks/${id}`);

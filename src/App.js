@@ -1,10 +1,17 @@
+import { Route, Routes } from 'react-router-dom';
 import './App.css';
-import ToDoHome from "./components/ToDoHome/ToDoHome"
+import Login from './components/Login/Login';
+import ToDoHome from './components/ToDoHome/ToDoHome';
+import Signup from './components/Signup/Signup'
 
 function App() {
   return (
     <div className="App">
-      <ToDoHome />
+      <Routes>
+        <Route path='/' element={<ToDoHome />}></Route>
+        <Route path='/login' element={<Login />}></Route>
+        <Route path='/signup' element={<Signup />}></Route>
+      </Routes>
     </div>
   );
 }
